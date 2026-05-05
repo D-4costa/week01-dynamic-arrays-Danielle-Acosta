@@ -1,64 +1,65 @@
-﻿/// <summary>
-/// These 3 functions will (in different ways) calculate the standard
-/// deviation from a list of numbers.  The standard deviation
-/// is defined as the square root of the variance.  The variance is 
-/// defined as the average of the squared differences from the mean.
+/// <summary>
+/// Calculates standard deviation using three different approaches.
+/// Standard deviation = sqrt(variance)
+/// Variance = average of squared differences from the mean.
 /// </summary>
-public static class StandardDeviation {
-    public static void Run() {
-        var numbers = new[] { 600, 470, 170, 430, 300 };
-        Console.WriteLine(StandardDeviation1(numbers)); // Should be 147.322 
-        Console.WriteLine(StandardDeviation2(numbers)); // Should be 147.322 
-        Console.WriteLine(StandardDeviation3(numbers)); // Should be 147.322 
+public static class StandardDeviation
+{
+    public static void Run()
+    {
+        int[] data = { 600, 470, 170, 430, 300 };
+
+        Console.WriteLine(StandardDev_Method1(data));
+        Console.WriteLine(StandardDev_Method2(data));
+        Console.WriteLine(StandardDev_Method3(data));
     }
 
-    private static double StandardDeviation1(int[] numbers) {
-        var total = 0.0;
-        var count = 0;
-        foreach (var number in numbers) {
-            total += number;
-            count += 1;
-        }
+    // Efficient approach (two passes)
+    private static double StandardDev_Method1(int[] numbers)
+    {
+        double sum = 0;
+        foreach (var n in numbers)
+            sum += n;
 
-        var avg = total / count;
-        var sumSquaredDifferences = 0.0;
-        foreach (var number in numbers) {
-            sumSquaredDifferences += Math.Pow(number - avg, 2);
-        }
+        double mean = sum / numbers.Length;
 
-        var variance = sumSquaredDifferences / count;
+        double varianceSum = 0;
+        foreach (var n in numbers)
+            varianceSum += Math.Pow(n - mean, 2);
+
+        double variance = varianceSum / numbers.Length;
         return Math.Sqrt(variance);
     }
 
-    private static double StandardDeviation2(int[] numbers) {
-        var sumSquaredDifferences = 0.0;
-        var countNumbers = 0;
-        foreach (var number in numbers) {
-            var total = 0;
-            var count = 0;
-            foreach (var value in numbers) {
-                total += value;
-                count += 1;
-            }
+    // Inefficient approach (recalculates mean every time)
+    private static double StandardDev_Method2(int[] numbers)
+    {
+        double varianceSum = 0;
 
-            var avg = total / count;
-            sumSquaredDifferences += Math.Pow(number - avg, 2);
-            countNumbers += 1;
+        foreach (var n in numbers)
+        {
+            double sum = 0;
+            foreach (var x in numbers)
+                sum += x;
+
+            double mean = sum / numbers.Length;
+            varianceSum += Math.Pow(n - mean, 2);
         }
 
-        var variance = sumSquaredDifferences / countNumbers;
+        double variance = varianceSum / numbers.Length;
         return Math.Sqrt(variance);
     }
 
-    private static double StandardDeviation3(int[] numbers) {
-        var count = numbers.Length;
-        var avg = (double)numbers.Sum() / count;
-        var sumSquaredDifferences = 0.0;
-        foreach (var number in numbers) {
-            sumSquaredDifferences += Math.Pow(number - avg, 2);
-        }
+    // Using built-in helpers (cleanest)
+    private static double StandardDev_Method3(int[] numbers)
+    {
+        double mean = numbers.Average();
 
-        var variance = sumSquaredDifferences / count;
+        double varianceSum = 0;
+        foreach (var n in numbers)
+            varianceSum += Math.Pow(n - mean, 2);
+
+        double variance = varianceSum / numbers.Length;
         return Math.Sqrt(variance);
     }
 }
