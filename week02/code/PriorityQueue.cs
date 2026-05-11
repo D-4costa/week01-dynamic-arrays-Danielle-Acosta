@@ -1,11 +1,9 @@
-﻿public class PriorityQueue
+public class PriorityQueue
 {
     private List<PriorityItem> _queue = new();
 
     /// <summary>
-    /// Add a new value to the queue with an associated priority.  The
-    /// node is always added to the back of the queue regardless of 
-    /// the priority.
+    /// Add a new value to the queue with an associated priority.
     /// </summary>
     /// <param name="value">The value</param>
     /// <param name="priority">The priority</param>
@@ -17,26 +15,32 @@
 
     public string Dequeue()
     {
-        if (_queue.Count == 0) // Verify the queue is not empty
+        if (_queue.Count == 0)
         {
             throw new InvalidOperationException("The queue is empty.");
         }
 
-        // Find the index of the item with the highest priority to remove
-        var highPriorityIndex = 0;
-        for (int index = 1; index < _queue.Count - 1; index++)
+        int highestPriorityIndex = 0;
+
+        // Find the item with the highest priority
+        for (int i = 1; i < _queue.Count; i++)
         {
-            if (_queue[index].Priority >= _queue[highPriorityIndex].Priority)
-                highPriorityIndex = index;
+            // Keep FIFO order when priorities match
+            if (_queue[i].Priority > _queue[highestPriorityIndex].Priority)
+            {
+                highestPriorityIndex = i;
+            }
         }
 
-        // Remove and return the item with the highest priority
-        var value = _queue[highPriorityIndex].Value;
+        var value = _queue[highestPriorityIndex].Value;
+
+        // Remove the item from the queue
+        _queue.RemoveAt(highestPriorityIndex);
+
         return value;
     }
 
     // DO NOT MODIFY THE CODE IN THIS METHOD
-    // The graders rely on this method to check if you fixed all the bugs, so changes to it will cause you to lose points.
     public override string ToString()
     {
         return $"[{string.Join(", ", _queue)}]";
@@ -55,7 +59,6 @@ internal class PriorityItem
     }
 
     // DO NOT MODIFY THE CODE IN THIS METHOD
-    // The graders rely on this method to check if you fixed all the bugs, so changes to it will cause you to lose points.
     public override string ToString()
     {
         return $"{Value} (Pri:{Priority})";
