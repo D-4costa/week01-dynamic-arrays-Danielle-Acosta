@@ -1,4 +1,4 @@
-﻿/*
+/*
  * CSE 212 Lesson 6C 
  * 
  * This code will analyze the NBA basketball data and create a table showing
@@ -22,15 +22,36 @@ public class Basketball
         using var reader = new TextFieldParser("basketball.csv");
         reader.TextFieldType = FieldType.Delimited;
         reader.SetDelimiters(",");
-        reader.ReadFields(); // ignore header row
-        while (!reader.EndOfData) {
+
+        reader.ReadFields();
+
+        while (!reader.EndOfData)
+        {
             var fields = reader.ReadFields()!;
             var playerId = fields[0];
             var points = int.Parse(fields[8]);
+
+            if (players.ContainsKey(playerId))
+            {
+                players[playerId] += points;
+            }
+            else
+            {
+                players[playerId] = points;
+            }
         }
 
-        Console.WriteLine($"Players: {{{string.Join(", ", players)}}}");
+        var topPlayers = players.ToArray();
 
-        var topPlayers = new string[10];
+        Array.Sort(topPlayers,
+            (firstPlayer, secondPlayer) =>
+                secondPlayer.Value - firstPlayer.Value);
+
+        Console.WriteLine();
+
+        for (int i = 0; i < 10; i++)
+        {
+            Console.WriteLine(topPlayers[i]);
+        }
     }
 }
