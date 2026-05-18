@@ -1,14 +1,14 @@
 public class FeatureCollection
 {
-    public List<Feature> Features { get; set; }
+    public List<FeatureData> Features { get; set; }
 }
 
-public class Feature
+public class FeatureData
 {
-    public Properties Properties { get; set; }
+    public EarthquakeInfo Properties { get; set; }
 }
 
-public class Properties
+public class EarthquakeInfo
 {
     public string Place { get; set; }
     public double? Mag { get; set; }
