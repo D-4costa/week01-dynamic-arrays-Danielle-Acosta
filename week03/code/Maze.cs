@@ -1,6 +1,6 @@
 public void MoveLeft()
 {
-    bool canMove = _mazeMap[(_currX,_currY)][0];
+    bool canMove = _mazeMap[(_currX, _currY)][0];
 
     if (canMove)
     {
@@ -14,7 +14,7 @@ public void MoveLeft()
 
 public void MoveRight()
 {
-    bool canMove = _mazeMap[(_currX,_currY)][1];
+    bool canMove = _mazeMap[(_currX, _currY)][1];
 
     if (canMove)
     {
@@ -28,7 +28,7 @@ public void MoveRight()
 
 public void MoveUp()
 {
-    bool canMove = _mazeMap[(_currX,_currY)][2];
+    bool canMove = _mazeMap[(_currX, _currY)][2];
 
     if (canMove)
     {
@@ -42,7 +42,7 @@ public void MoveUp()
 
 public void MoveDown()
 {
-    bool canMove = _mazeMap[(_currX,_currY)][3];
+    bool canMove = _mazeMap[(_currX, _currY)][3];
 
     if (canMove)
     {
