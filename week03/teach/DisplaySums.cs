@@ -1,7 +1,5 @@
-public static class DisplaySums
-{
-    public static void Run()
-    {
+public static class DisplaySums {
+    public static void Run() {
         DisplaySumPairs([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 
         Console.WriteLine("------------");
@@ -14,22 +12,22 @@ public static class DisplaySums
     }
 
     /// <summary>
-    /// Display pairs of numbers that sum to 10
+    /// Display pairs of numbers (no duplicates should be displayed) that sum to
+    /// 10 using a set in O(n) time. We are assuming that there are no duplicates
+    /// in the list.
     /// </summary>
-    private static void DisplaySumPairs(int[] numbers)
-    {
-        HashSet<int> previousNumbers = new();
+    private static void DisplaySumPairs(int[] numbers) {
 
-        foreach (int currentNumber in numbers)
+        var valuesSeen = new HashSet<int>();
+
+        foreach (var n in numbers)
         {
-            int neededValue = 10 - currentNumber;
-
-            if (previousNumbers.Contains(neededValue))
+            if (valuesSeen.Contains(10 - n))
             {
-                Console.WriteLine($"{currentNumber} {neededValue}");
+                Console.WriteLine($"{n} {10 - n}");
             }
 
-            previousNumbers.Add(currentNumber);
+            valuesSeen.Add(n);
         }
     }
 }
