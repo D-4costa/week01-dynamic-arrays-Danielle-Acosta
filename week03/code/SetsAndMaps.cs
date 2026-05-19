@@ -1,22 +1,113 @@
-public static string[] FindPairs(string[] words)
+using System.Text.Json;
+
+public static class SetsAndMaps
 {
-    HashSet<string> checkedWords = new();
-    List<string> matches = new();
-
-    foreach (string currentWord in words)
+    public static string[] FindPairs(string[] words)
     {
-        if (currentWord[0] == currentWord[1])
-            continue;
+        var seen = new HashSet<string>();
+        var pairs = new List<string>();
 
-        string backwards = "" + currentWord[1] + currentWord[0];
-
-        if (checkedWords.Contains(backwards))
+        foreach (var word in words)
         {
-            matches.Add($"{currentWord} & {backwards}");
+            if (word[0] == word[1])
+                continue;
+
+            string reverse = $"{word[1]}{word[0]}";
+
+            if (seen.Contains(reverse))
+            {
+                pairs.Add($"{word} & {reverse}");
+            }
+
+            seen.Add(word);
         }
 
-        checkedWords.Add(currentWord);
+        return pairs.ToArray();
     }
 
-    return matches.ToArray();
+    public static Dictionary<string, int> SummarizeDegrees(string filename)
+    {
+        var degrees = new Dictionary<string, int>();
+
+        foreach (var line in File.ReadLines(filename))
+        {
+            var fields = line.Split(",");
+
+            string degree = fields[3].Trim();
+
+            if (degrees.ContainsKey(degree))
+            {
+                degrees[degree]++;
+            }
+            else
+            {
+                degrees[degree] = 1;
+            }
+        }
+
+        return degrees;
+    }
+
+    public static bool IsAnagram(string word1, string word2)
+    {
+        word1 = word1.Replace(" ", "").ToLower();
+        word2 = word2.Replace(" ", "").ToLower();
+
+        if (word1.Length != word2.Length)
+            return false;
+
+        var letters = new Dictionary<char, int>();
+
+        foreach (char c in word1)
+        {
+            if (letters.ContainsKey(c))
+                letters[c]++;
+            else
+                letters[c] = 1;
+        }
+
+        foreach (char c in word2)
+        {
+            if (!letters.ContainsKey(c))
+                return false;
+
+            letters[c]--;
+
+            if (letters[c] < 0)
+                return false;
+        }
+
+        return true;
+    }
+
+    public static string[] EarthquakeDailySummary()
+    {
+        const string uri = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson";
+
+        using var client = new HttpClient();
+        using var getRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+        using var jsonStream = client.Send(getRequestMessage).Content.ReadAsStream();
+        using var reader = new StreamReader(jsonStream);
+
+        var json = reader.ReadToEnd();
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        var featureCollection =
+            JsonSerializer.Deserialize<FeatureCollection>(json, options);
+
+        var results = new List<string>();
+
+        foreach (var earthquake in featureCollection.Features)
+        {
+            results.Add(
+                $"{earthquake.Properties.Place} - Mag {earthquake.Properties.Mag}"
+            );
+        }
+
+        return results.ToArray();
+    }
 }
