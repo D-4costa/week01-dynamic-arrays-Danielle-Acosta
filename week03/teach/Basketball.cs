@@ -22,7 +22,6 @@ public class Basketball
         using var reader = new TextFieldParser("basketball.csv");
         reader.TextFieldType = FieldType.Delimited;
         reader.SetDelimiters(",");
-
         reader.ReadFields();
 
         while (!reader.EndOfData)
@@ -32,24 +31,19 @@ public class Basketball
             var points = int.Parse(fields[8]);
 
             if (players.ContainsKey(playerId))
-            {
                 players[playerId] += points;
-            }
             else
-            {
                 players[playerId] = points;
-            }
         }
 
         var topPlayers = players.ToArray();
 
         Array.Sort(topPlayers,
-            (firstPlayer, secondPlayer) =>
-                secondPlayer.Value - firstPlayer.Value);
+            (p1, p2) => p2.Value - p1.Value);
 
         Console.WriteLine();
 
-        for (int i = 0; i < 10; i++)
+        for (var i = 0; i < 10; ++i)
         {
             Console.WriteLine(topPlayers[i]);
         }
