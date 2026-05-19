@@ -24,21 +24,20 @@ public class DuplicateCounter
 
     private static int CountDuplicates(int[] data)
     {
-        HashSet<int> numbersSeen = new();
-        int duplicateCount = 0;
+        var unique = new HashSet<int>();
+        int duplicates = 0;
 
         foreach (int number in data)
         {
-            if (numbersSeen.Contains(number))
-            {
-                duplicateCount++;
-            }
+            if (unique.Contains(number))
+                duplicates++;
             else
-            {
-                numbersSeen.Add(number);
-            }
+                unique.Add(number);
         }
 
+        return duplicates;
+    }
+}
         return duplicateCount;
     }
 }
