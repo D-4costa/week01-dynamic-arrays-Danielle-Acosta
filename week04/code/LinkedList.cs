@@ -22,9 +22,9 @@ public class LinkedList : IEnumerable<int>
         // If the list is not empty, then only head will be affected.
         else
         {
-            newNode.Next = _head; // Connect new node to the previous head
-            _head.Prev = newNode; // Connect the previous head to the new node
-            _head = newNode; // Update the head to point to the new node
+            newNode.Next = _head;
+            _head.Prev = newNode;
+            _head = newNode;
         }
     }
 
@@ -36,7 +36,7 @@ public class LinkedList : IEnumerable<int>
         Node newNode = new(value);
 
         // If the list is empty
-        if (_tail is null)
+        if (_head is null)
         {
             _head = newNode;
             _tail = newNode;
@@ -44,7 +44,7 @@ public class LinkedList : IEnumerable<int>
         // If the list already has items
         else
         {
-            _tail.Next = newNode;
+            _tail!.Next = newNode;
             newNode.Prev = _tail;
             _tail = newNode;
         }
@@ -56,19 +56,17 @@ public class LinkedList : IEnumerable<int>
     public void RemoveHead()
     {
         // If the list has only one item in it, then set head and tail 
-        // to null resulting in an empty list.  This condition will also
-        // cover an empty list.  Its okay to set to null again.
+        // to null resulting in an empty list.
         if (_head == _tail)
         {
             _head = null;
             _tail = null;
         }
-        // If the list has more than one item in it, then only the head
-        // will be affected.
+        // If the list has more than one item in it
         else if (_head is not null)
         {
-            _head.Next!.Prev = null; // Disconnect the second node from the first node
-            _head = _head.Next; // Update the head to point to the second node
+            _head.Next!.Prev = null;
+            _head = _head.Next;
         }
     }
 
@@ -77,13 +75,13 @@ public class LinkedList : IEnumerable<int>
     /// </summary>
     public void RemoveTail()
     {
-        // If the list is empty or only has one item
+        // If the list is empty or has one node
         if (_head == _tail)
         {
             _head = null;
             _tail = null;
         }
-        // If the list has more than one item
+        // If the list has multiple nodes
         else if (_tail is not null)
         {
             _tail.Prev!.Next = null;
@@ -96,36 +94,31 @@ public class LinkedList : IEnumerable<int>
     /// </summary>
     public void InsertAfter(int value, int newValue)
     {
-        // Search for the node that matches 'value' by starting at the 
-        // head of the list.
         Node? curr = _head;
 
         while (curr is not null)
         {
             if (curr.Data == value)
             {
-                // If the location of 'value' is at the end of the list,
-                // then we can call insert_tail to add 'new_value'
                 if (curr == _tail)
                 {
                     InsertTail(newValue);
                 }
-                // For any other location of 'value', need to create a 
-                // new node and reconnect the links to insert.
                 else
                 {
                     Node newNode = new(newValue);
 
-                    newNode.Prev = curr; // Connect new node to the node containing 'value'
-                    newNode.Next = curr.Next; // Connect new node to the node after 'value'
-                    curr.Next!.Prev = newNode; // Connect node after 'value' to the new node
-                    curr.Next = newNode; // Connect the node containing 'value' to the new node
+                    newNode.Prev = curr;
+                    newNode.Next = curr.Next;
+
+                    curr.Next!.Prev = newNode;
+                    curr.Next = newNode;
                 }
 
-                return; // We can exit the function after we insert
+                return;
             }
 
-            curr = curr.Next; // Go to the next node to search for 'value'
+            curr = curr.Next;
         }
     }
 
@@ -140,17 +133,17 @@ public class LinkedList : IEnumerable<int>
         {
             if (curr.Data == value)
             {
-                // If the node is the head
+                // Remove from head
                 if (curr == _head)
                 {
                     RemoveHead();
                 }
-                // If the node is the tail
+                // Remove from tail
                 else if (curr == _tail)
                 {
                     RemoveTail();
                 }
-                // If the node is in the middle
+                // Remove from middle
                 else
                 {
                     curr.Prev!.Next = curr.Next;
@@ -187,7 +180,6 @@ public class LinkedList : IEnumerable<int>
     /// </summary>
     IEnumerator IEnumerable.GetEnumerator()
     {
-        // call the generic version of the method
         return this.GetEnumerator();
     }
 
@@ -196,12 +188,12 @@ public class LinkedList : IEnumerable<int>
     /// </summary>
     public IEnumerator<int> GetEnumerator()
     {
-        var curr = _head; // Start at the beginning since this is a forward iteration.
+        var curr = _head;
 
         while (curr is not null)
         {
-            yield return curr.Data; // Provide (yield) each item to the user
-            curr = curr.Next; // Go forward in the linked list
+            yield return curr.Data;
+            curr = curr.Next;
         }
     }
 
