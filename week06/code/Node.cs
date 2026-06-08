@@ -1,116 +1,94 @@
-using System.Collections;
-
-public class BinarySearchTree : IEnumerable<int>
+public class Node
 {
-    private Node? _root;
+    public int Data { get; set; }
+    public Node? Right { get; private set; }
+    public Node? Left { get; private set; }
 
-    /// <summary>
-    /// Insert a new value into the BST.
-    /// </summary>
+    public Node(int data)
+    {
+        Data = data;
+    }
+
     public void Insert(int value)
     {
-        Node newNode = new(value);
-
-        if (_root is null)
+        // Ignore duplicate values since this BST acts like a sorted set.
+        if (value == Data)
         {
-            _root = newNode;
+            return;
+        }
+
+        // Values smaller than the current node belong on the left.
+        if (value < Data)
+        {
+            if (Left is null)
+            {
+                Left = new Node(value);
+            }
+            else
+            {
+                Left.Insert(value);
+            }
         }
         else
         {
-            _root.Insert(value);
+            // Values larger than the current node belong on the right.
+            if (Right is null)
+            {
+                Right = new Node(value);
+            }
+            else
+            {
+                Right.Insert(value);
+            }
         }
     }
 
-    /// <summary>
-    /// Determine whether the tree contains the specified value.
-    /// </summary>
     public bool Contains(int value)
     {
-        return _root != null && _root.Contains(value);
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
-
-    /// <summary>
-    /// Traverse the tree from smallest to largest.
-    /// </summary>
-    public IEnumerator<int> GetEnumerator()
-    {
-        var numbers = new List<int>();
-
-        TraverseForward(_root, numbers);
-
-        foreach (var number in numbers)
+        // Base case: the value was found.
+        if (value == Data)
         {
-            yield return number;
+            return true;
         }
-    }
 
-    private void TraverseForward(Node? node, List<int> values)
-    {
-        if (node is not null)
+        // Search the left subtree when the target is smaller.
+        if (value < Data)
         {
-            TraverseForward(node.Left, values);
-            values.Add(node.Data);
-            TraverseForward(node.Right, values);
+            if (Left is null)
+            {
+                return false;
+            }
+
+            return Left.Contains(value);
         }
-    }
 
-    /// <summary>
-    /// Traverse the tree from largest to smallest.
-    /// </summary>
-    public IEnumerable Reverse()
-    {
-        var numbers = new List<int>();
-
-        TraverseBackward(_root, numbers);
-
-        foreach (var number in numbers)
+        // Search the right subtree when the target is larger.
+        if (Right is null)
         {
-            yield return number;
+            return false;
         }
+
+        return Right.Contains(value);
     }
 
-    private void TraverseBackward(Node? node, List<int> values)
-    {
-        if (node is not null)
-        {
-            // Visit the right subtree first so larger values appear first.
-            TraverseBackward(node.Right, values);
-
-            values.Add(node.Data);
-
-            // Visit the left subtree last.
-            TraverseBackward(node.Left, values);
-        }
-    }
-
-    /// <summary>
-    /// Return the height of the BST.
-    /// </summary>
     public int GetHeight()
     {
-        if (_root is null)
+        int leftHeight = 0;
+        int rightHeight = 0;
+
+        // Recursively determine the height of the left subtree.
+        if (Left is not null)
         {
-            return 0;
+            leftHeight = Left.GetHeight();
         }
 
-        return _root.GetHeight();
-    }
+        // Recursively determine the height of the right subtree.
+        if (Right is not null)
+        {
+            rightHeight = Right.GetHeight();
+        }
 
-    public override string ToString()
-    {
-        return "<Bst>{" + string.Join(", ", this) + "}";
-    }
-}
-
-public static class IntArrayExtensionMethods
-{
-    public static string AsString(this IEnumerable array)
-    {
-        return "<IEnumerable>{" + string.Join(", ", array.Cast<int>()) + "}";
+        // Height of this node is one plus the tallest subtree.
+        return 1 + Math.Max(leftHeight, rightHeight);
     }
 }
