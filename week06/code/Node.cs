@@ -1,45 +1,116 @@
-public class Node
+using System.Collections;
+
+public class BinarySearchTree : IEnumerable<int>
 {
-    public int Data { get; set; }
-    public Node? Right { get; private set; }
-    public Node? Left { get; private set; }
+    private Node? _root;
 
-    public Node(int data)
-    {
-        this.Data = data;
-    }
-
+    /// <summary>
+    /// Insert a new value into the BST.
+    /// </summary>
     public void Insert(int value)
     {
-        // TODO Start Problem 1
+        Node newNode = new(value);
 
-        if (value < Data)
+        if (_root is null)
         {
-            // Insert to the left
-            if (Left is null)
-                Left = new Node(value);
-            else
-                Left.Insert(value);
+            _root = newNode;
         }
         else
         {
-            // Insert to the right
-            if (Right is null)
-                Right = new Node(value);
-            else
-                Right.Insert(value);
+            _root.Insert(value);
         }
     }
 
+    /// <summary>
+    /// Determine whether the tree contains the specified value.
+    /// </summary>
     public bool Contains(int value)
     {
-        // TODO Start Problem 2
-        return false;
+        return _root != null && _root.Contains(value);
     }
 
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
+
+    /// <summary>
+    /// Traverse the tree from smallest to largest.
+    /// </summary>
+    public IEnumerator<int> GetEnumerator()
+    {
+        var numbers = new List<int>();
+
+        TraverseForward(_root, numbers);
+
+        foreach (var number in numbers)
+        {
+            yield return number;
+        }
+    }
+
+    private void TraverseForward(Node? node, List<int> values)
+    {
+        if (node is not null)
+        {
+            TraverseForward(node.Left, values);
+            values.Add(node.Data);
+            TraverseForward(node.Right, values);
+        }
+    }
+
+    /// <summary>
+    /// Traverse the tree from largest to smallest.
+    /// </summary>
+    public IEnumerable Reverse()
+    {
+        var numbers = new List<int>();
+
+        TraverseBackward(_root, numbers);
+
+        foreach (var number in numbers)
+        {
+            yield return number;
+        }
+    }
+
+    private void TraverseBackward(Node? node, List<int> values)
+    {
+        if (node is not null)
+        {
+            // Visit the right subtree first so larger values appear first.
+            TraverseBackward(node.Right, values);
+
+            values.Add(node.Data);
+
+            // Visit the left subtree last.
+            TraverseBackward(node.Left, values);
+        }
+    }
+
+    /// <summary>
+    /// Return the height of the BST.
+    /// </summary>
     public int GetHeight()
     {
-        // TODO Start Problem 4
-        return 0; // Replace this line with the correct return statement(s)
+        if (_root is null)
+        {
+            return 0;
+        }
+
+        return _root.GetHeight();
+    }
+
+    public override string ToString()
+    {
+        return "<Bst>{" + string.Join(", ", this) + "}";
+    }
+}
+
+public static class IntArrayExtensionMethods
+{
+    public static string AsString(this IEnumerable array)
+    {
+        return "<IEnumerable>{" + string.Join(", ", array.Cast<int>()) + "}";
     }
 }
